@@ -1,0 +1,157 @@
+#include <glut.h>
+#include <math.h>
+
+bool day = true;
+
+float x_position = -0.75;
+float y_position = 0.75;
+float radius = 0.14;
+int segments = 50;
+double G_Sky= 177;
+double B_Sky= 217;
+
+float colorSky = 177;
+
+float speed = 0.0001;
+double ChangeG_Sky;
+double ChangeB_Sky;
+
+
+
+void renderSky(double &G_Sky, double &B_Sky) {
+	glBegin(GL_POLYGON);
+	glColor3ub(0, static_cast<int>(G_Sky), static_cast<int>(B_Sky));
+	glVertex2f(-5, -0.25);
+	glVertex2f(-5, 5);
+	glVertex2f(5, 5);
+	glVertex2f(5, -0.25);
+	glEnd();
+
+}
+
+void renderGround() {
+
+	glBegin(GL_POLYGON);
+	glColor3ub(0, 186, 6);
+	glVertex2f(-5, -0.25); //
+	glVertex2f(-5, -5); //
+	glVertex2f(5, -5); //
+	glVertex2f(5, -0.25); //
+	glEnd();
+}
+
+void renderHouse() {
+	glBegin(GL_POLYGON); //WALLS
+	glColor3ub(139, 69, 19);
+	glVertex2f(-0.25, 0);
+	glVertex2f(-0.25, -0.5);
+	glVertex2f(0.25, -0.5);
+	glVertex2f(0.25, 0);
+	glEnd();
+
+	glBegin(GL_POLYGON); //WINDOW
+	glColor3ub(37, 26, 9);
+	glVertex2f(-0.1, 0.1);
+	glVertex2f(-0.1, -0.1);
+	glVertex2f(0.1, -0.1);
+	glVertex2f(0.1, 0.1);
+	glEnd();
+
+	glBegin(GL_TRIANGLES); //ROOF
+	glColor3ub(128, 0, 0);
+	glVertex2f(-0.45, 0);
+	glVertex2f(0.45, 0);
+	glVertex2f(0, 0.25);
+	glEnd();
+
+
+
+	//glBegin(GL_POLYGON); ---- проверка окна
+	//glColor3ub(1, 1, 1);
+	//glVertex2f(-1, 1);
+	//glVertex2f(-0.9, -0.9);
+	//glVertex2f(0.9, -0.9);
+	//glVertex2f(0.9, 0.9);
+	//glEnd();
+}
+
+void renderSun(float &x_position, float &y_position, float &radius, int &amountSegments)
+{	
+		glBegin(GL_POLYGON);
+		glColor3ub(255, 215, 0);
+		for (int i = 0; i < amountSegments; i++)
+		{
+			float angle = 2.0 * 3.1415926 * float(i) / float(amountSegments);
+
+			float dx = radius * cosf(angle);
+			float dy = radius * sinf(angle);
+
+			glVertex2f(x_position + dx, y_position + dy);
+		}
+		glEnd();
+		x_position +=speed;
+
+}
+
+void renderMoon(float& x_position, float& y_position, float& radius, int& amountSegments) {
+	glBegin(GL_POLYGON);
+	glColor3ub(192.f, 192.f, 192.f);
+	for (int i = 0; i < amountSegments; i++)
+	{
+		float angle = 2.0 * 3.1415926 * float(i) / float(amountSegments);
+
+		float dx = radius * cosf(angle);
+		float dy = radius * sinf(angle);
+
+		glVertex2f(x_position + dx, y_position + dy);
+	}
+	glEnd();
+	x_position += speed;
+
+}
+
+void display() {
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	renderSky(G_Sky,B_Sky);
+	renderGround();
+	renderHouse();
+
+	switch (day)
+	{
+	case true:
+		renderSun(x_position, y_position, radius, segments);
+		::G_Sky -= ChangeG_Sky;
+		::B_Sky -= ChangeB_Sky;
+		if (x_position >= 1 + radius) {
+			day = false;
+			x_position = -1 - radius;
+		}
+		break;
+	case false:
+		renderMoon(x_position, y_position, radius, segments);
+		G_Sky += ChangeG_Sky;
+		B_Sky += ChangeB_Sky;
+		if (x_position >= 1 + radius) {
+			day = true;
+			x_position = -1 - radius;
+		}
+		break;
+	}
+
+	glutPostRedisplay();
+	glutSwapBuffers();
+}
+
+int main(int argc, char** argv) {
+	glutInit(&argc, argv);
+	ChangeG_Sky =	G_Sky/((2 * static_cast<double>(radius) + 1) / speed);
+	ChangeB_Sky = B_Sky / ((2 * static_cast<double>(radius) + 1) / speed);
+	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
+	glutInitWindowPosition(100, 50);
+	glutInitWindowSize(400, 400);
+	glutCreateWindow("House");
+	glutDisplayFunc(display);
+	glutMainLoop();
+	return 0;
+}
