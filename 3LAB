@@ -2,61 +2,87 @@
 #include <math.h>
 
 
-
-
-void octaider()
+void octaiderUp()
 {
-	gluLookAt(0, 2, 0, 0, 0, 0, 0, 0, -1);
-
-
-
 	glBegin(GL_TRIANGLES); //3
-	glColor3ub(0, 255, 0);
+	glColor3ub(240, 100, 100);
 	glVertex3f(0, 0.5, 0);
 	glVertex3f(0.5, 0, 0);
 	glVertex3f(0, 0, -0.5);
 	glEnd();
 
 	glBegin(GL_TRIANGLES);
-	glColor3ub(0, 0, 255); //4
+	glColor3ub(240, 100, 200); //4
 	glVertex3f(0, 0.5, 0);
 	glVertex3f(0, 0, -0.5);
 	glVertex3f(-0.5, 0, 0);
 	glEnd();
 
 	glBegin(GL_TRIANGLES);
-	glColor3ub(255, 255, 255); //1
+	glColor3ub(180, 100, 240); //1
 	glVertex3f(0, 0.5, 0);
 	glVertex3f(-0.5, 0, 0);
 	glVertex3f(0, 0, 0.5);
 	glEnd();
 
 	glBegin(GL_TRIANGLES); //2
-	glColor3ub(255, 0, 0);
+	glColor3ub(105, 105, 240);
 	glVertex3f(0, 0.5, 0);
 	glVertex3f(0, 0, 0.5);
 	glVertex3f(0.5, 0, 0);
 	glEnd();
 }
 
+void octaiderDown() {
+
+	glBegin(GL_TRIANGLES); //4 задний левый
+	glColor3ub(105, 235, 240);
+	glVertex3f(0, -0.5, 0);
+	glVertex3f(0, 0, -0.5);
+	glVertex3f(-0.5, 0, 0);
+	glEnd();
+
+	glBegin(GL_TRIANGLES);
+	glColor3ub(105, 240, 105); //1 передний левый
+	glVertex3f(0, -0.5, 0);
+	glVertex3f(-0.5, 0, 0);
+	glVertex3f(0, 0, 0.5);
+	glEnd();
+
+	glBegin(GL_TRIANGLES);
+	glColor3ub(240, 230, 105); //2 передний правый
+	glVertex3f(0, -0.5, 0);
+	glVertex3f(0, 0, 0.5);
+	glVertex3f(0.5, 0, 0);
+	glEnd();
+
+	glBegin(GL_TRIANGLES); //3
+	glColor3ub(200, 135, 25);
+	glVertex3f(0, -0.5, 0);
+	glVertex3f(0.5, 0, 0);
+	glVertex3f(0, 0, -0.5);
+	glEnd();
+
+}
 
 void display()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-
-
-	octaider();
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluLookAt(0, 0, 1, 0, 0, 0, 0, 1, 0);
+	
+	octaiderUp();
+	octaiderDown();
 	glutPostRedisplay();
 	glutSwapBuffers();
 }
 
 
-
 int main(int argc, char** argv)
 {
-
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowPosition(100, 50);
@@ -65,7 +91,6 @@ int main(int argc, char** argv)
 
 	
 	glutDisplayFunc(display);	
-
 	glutMainLoop();
 	return 0;
 }
